@@ -107,6 +107,7 @@
         // WebSocket logic
         const heartRateElement = document.getElementById('heart-rate'); // Phần tử hiển thị nhịp tim
         const spo2Element = document.getElementById('spo2');        // Phần tử hiển thị SpO2
+        const objecttempElement = document.getElementById('objecttemp'); // Phần tử hiển thị nhiệt độ cơ th
         const statusElement = document.getElementById('status');        // Phần tử hiển thị trạng thái kết nối
         const socket = new WebSocket('ws://192.168.137.1:3030');    // Thay đổi URL nếu cần
 
@@ -121,18 +122,21 @@
             const data = event.data;        // Dữ liệu nhận được
             const parts = data.split(':');  // Giả sử dữ liệu có định dạng "nhịp tim:spo2"
             
-            if (parts.length >= 2) {    // Kiểm tra định dạng dữ liệu
+            if (parts.length >= 3) {    // Kiểm tra định dạng dữ liệu
                 const heartRate = parseFloat(parts[0]); // Chuyển đổi nhịp tim sang số
                 const spo2 = parseFloat(parts[1]);      // Chuyển đổi SpO2 sang số
-                
+                const objecttemp = parseFloat(parts[2]); // Chuyển đổi nhiệt độ vật thể sang số
                 // Cập nhật giá trị văn bản
                 heartRateElement.textContent = heartRate;       // Cập nhật nhịp tim
                 spo2Element.textContent = spo2;     // Cập nhật SpO2
+                objecttempElement.textContent = objecttemp; // Cập nhật nhiệt độ cơ thể
                 heartRateElement.style.animation = 'liquidPulse 1s ease-in-out';    // Hiệu ứng nhịp tim
                 spo2Element.style.animation = 'liquidPulse 1s ease-in-out';     // Hiệu ứng SpO2
+                objecttempElement.style.animation = 'liquidPulse 1s ease-in-out'; // Hiệu ứng nhiệt độ cơ thể
                 setTimeout(() => {
                     heartRateElement.style.animation = '';
                     spo2Element.style.animation = '';
+                    objecttempElement.style.animation = '';
                 }, 1000);
 
                 // Cập nhật đồ thị
