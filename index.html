@@ -3,43 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giám Sát Sức Khỏe MAX30102 - Liquid Glass</title>
+    <title>Giám Sát Sức Khỏe</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
     <script src="script.js" defer></script>
 </head>
 <body>
     <div class="container">
-        <h1>Giám Sát Sức Khỏe MAX30102</h1>
-        <div class="data-card">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#ff6b6b" stroke-width="2">
-                <path d="M12 20s-8-4-8-10c0-4 3-7 8-7s8 3 8 7c0 6-8 10-8 10zm0-14l3 4h-6l3-4z"/>
-            </svg>
-            <p>Nhịp Tim: <span id="heart-rate" class="value">--</span> bpm</p>
+        <h1>Bảng Giám Sát Sức Khỏe</h1>
+        
+        <div style="text-align: center; margin-bottom: 25px;">
+            Trạng thái kết nối: <span id="status" class="status disconnected">Đang ngắt</span>
         </div>
-        <div class="data-card">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#ff6b6b" stroke-width="2">
-                <path d="M12 21a9 9 0 100-18 9 9 0 000 18zm0-4a5 5 0 110-10 5 5 0 010 10z"/>
-            </svg>
-            <p>SpO2: <span id="spo2" class="value">--</span> %</p>
+
+        <div class="user-managerment"> 
+            <h2>Quản Lý Người Dùng</h2>
+            <div id="currentUserDisplay"> 
+                Người dùng hiện tại: 
+                <span id="current-user-name" class="user-info-name">CHƯA CHỌN</span> 
+                (ID: <span id="current-user-id" class="user-info-id">---</span>)
+            </div>
+            <p id="userMessage" class="message-info"></p>
+            <form id="createUserForm">
+                <input type="text" id="username" placeholder="Tên đăng nhập" required>
+                <input type="text" id="fullName" placeholder="Họ và Tên" required>
+                <input type="number" id="age" placeholder="Tuổi" required>
+                <select id="gender" required>
+                    <option value="" disabled selected>Chọn Giới Tính</option>
+                    <option value="male">Nam</option>
+                    <option value="female">Nữ</option>
+                    <option value="other">Khác</option>
+                </select>
+                <button type="submit">Tạo Người Dùng Mới</button>
+            </form>
         </div>
-        <div class="data-card">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#fbbd23" stroke-width="2"> 
-                <path d="M8 2v2H4v2h16v-2h-4V2h-4zm-2 6v10c0 3.31 2.69 6 6 6s6-2.69 6-6V8H6zm6 12c-2.21 0-4-1.79-4-4V8h8v8c0 2.21-1.79 4-4 4z"/>
-            </svg>
-            <p>Nhiệt độ Cơ thể: <span id="objecttemp" class="value">--</span> °C</p>
+
+        <div class="data-cards-grid">
+            <div class="data-card heart-rate">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="2">
+                    <path d="M12 20s-8-4-8-10c0-4 3-7 8-7s8 3 8 7c0 6-8 10-8 10zm0-14l3 4h-6l3-4z"/>
+                </svg>
+                <p>Nhịp Tim: <span id="heart-rate" class="value">--</span> <span class="unit">bpm</span></p>
+            </div>
+            <div class="data-card spo2">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#2ecc71" stroke-width="2">
+                    <path d="M12 21a9 9 0 100-18 9 9 0 000 18zm0-4a5 5 0 110-10 5 5 0 010 10z"/>
+                </svg>
+                <p>Oxy Máu: <span id="spo2" class="value">--</span> <span class="unit">%</span></p>
+            </div>
+            <div class="data-card objecttemp">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#f39c12" stroke-width="2">
+                    <path d="M8 2v2H4v2h16v-2h-4V2h-4zm-2 6v10c0 3.31 2.69 6 6 6s6-2.69 6-6V8H6zm6 12c-2.21 0-4-1.79-4-4V8h8v8c0 2.21-1.79 4-4 4z"/>
+                </svg>
+                <p>Nhiệt Độ: <span id="objecttemp" class="value">--</span> <span class="unit">°C</span></p>
+            </div>
         </div>
-        <div class="tabs">
-            <div class="tab active" onclick="showChart('heartRate')">Nhịp Tim</div>
-            <div class="tab" onclick="showChart('spo2')">SpO2</div>
+        
+        <div class="charts-section">
+            <h2>Biểu đồ Theo Dõi</h2>
+            <div class="tabs-container">
+                <div class="tab active" data-chart="heartRate" onclick="showChart('heartRate')">Nhịp Tim</div>
+                <div class="tab" data-chart="spo2" onclick="showChart('spo2')">SpO₂</div>
+                <div class="tab" data-chart="objecttemp" onclick="showChart('objecttemp')">Nhiệt Độ</div>
+            </div>
+
+            <div id="heartRateChartContainer" class="chart-container active">
+                <canvas id="heartRateChart"></canvas>
+            </div>
+            <div id="spo2ChartContainer" class="chart-container">
+                <canvas id="spo2Chart"></canvas>
+            </div>
+            <div id="objecttempChartContainer" class="chart-container">
+                <canvas id="objecttempChart"></canvas>
+            </div>
         </div>
-        <div class="chart-container active" id="heartRateChartContainer">
-            <canvas id="heartRateChart"></canvas>
-        </div>
-        <div class="chart-container" id="spo2ChartContainer">
-            <canvas id="spo2Chart"></canvas>
-        </div>
-        <p id="status" class="status">Đang kết nối...</p>
+
     </div>
 </body>
 </html>

@@ -82,7 +82,7 @@ void loop() {
     
     // Chỉ gửi dữ liệu khi cả hai giá trị đều đã được nhận
     if (!heartRate.isEmpty() && !spo2.isEmpty() && !temp.isEmpty()) {
-      String message = heartRate + ":" + spo2 + ":" + temp + ":max30102";
+      String message = heartRate + ":" + spo2 + ":" + temp ;
       socket.send(message);
       Serial.println("Gửi dữ liệu: " + message);
       

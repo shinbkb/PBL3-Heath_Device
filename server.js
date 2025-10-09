@@ -10,7 +10,7 @@ const dbConfig = {      // Cấu hình kết nối cơ sở dữ liệu
 
 let connection;       // Biến kết nối cơ sở dữ liệu
 
-async function connectToDatabase() {
+async function connectToDatabase() {    // Hàm kết nối đến cơ sở dữ liệu với cơ chế thử lại
     while (true) {
         try {
             connection = await mysql.createConnection(dbConfig);
@@ -23,17 +23,32 @@ async function connectToDatabase() {
         }
     }
 }
-async function saveDataToDatabase(heartRate, spo2, objecttemp) { // Hàm lưu dữ liệu vào cơ sở dữ liệu
+async function saveDataToDatabase(userID,heartRate, spo2, objecttemp) { // Hàm lưu dữ liệu vào cơ sở dữ liệu
     if (!connection) {
         console.error('No database connection available.');
         return;
     }
     try {
-        const query = 'INSERT INTO max30102 (heartRate, spo2, temperature) VALUES (?, ?, ?)';
-        const [results] = await connection.execute(query, [heartRate, spo2, objecttemp]);
+        const query = 'INSERT INTO max30102 (user_id, heartRate, spo2, temperature) VALUES (?, ?, ?, ?)';
+        const [results] = await connection.execute(query, [userID, heartRate, spo2, objecttemp]);
         console.log('Data saved to database:', results);
     } catch (error) {
         console.error('Error saving data to database:', error); // Ghi lỗi nếu có lỗi xảy ra
+    }
+}
+async function createUser(username, fullname, age, gender) {        // Hàm tạo người dùng mới
+    if (!connection) {
+        console.error('No database connection available.');
+        return null;
+    }
+    try {
+        const query = 'INSERT INTO users (username, full_name, age, gender) VALUES (?, ?, ?, ?)';
+        const [resolves] = await connection.execute(query, [username, fullname, age , gender]);  // Sử dụng connection.execute để tránh SQL injection
+        console.log('User đã được tạo:', resolves);
+        return resolves.insertId; // Trả về ID của người dùng mới tạo
+    } catch (error) {
+        console.error('Error creating user:', error);       // Ghi lỗi nếu có lỗi xảy ra
+        return null;
     }
 }
 // Tạo WebSocket server
@@ -49,29 +64,74 @@ wss.on('connection', ws => {
         const data = message.toString();
         console.log(`Received from ESP32: ${data}`);
 
-        const parts = data.split(':');
-        // Vẫn kiểm tra 3 phần tử (HR, SpO2, Temp)
-        if (parts.length >= 3) {  
-            const heartRate = parseFloat(parts[0]); 
-            const spo2 = parseFloat(parts[1]);      
-            const objecttemp = parseFloat(parts[2]); 
+        if (data.startsWith('CREATE_USER:')) { // Kiểm tra nếu tin nhắn bắt đầu bằng '
+            const parts = data.substring('CREATE_USER:'.length).split(':');    // Tách phần
+            if (parts.length === 4 ) { // Kiểm tra nếu có đúng 4 phần (username, fullname, age , gender)
+                const [username, fullname, ageStr, gender] = parts;
+                const age = parseInt(ageStr); // Chuyển đổi age sang số nguyên
+                const userID = await createUser(username, fullname, age , gender); // Tạo người dùng mới và lấy ID
+                if (userID !== null) {
+                    ws.send(`USER_CREATED:${userID}:${username}`); // Gửi lại ID người dùng mới tạo cho client
+                    console.log(`User created with ID: ${userID}:${username}`);
+                } else {
+                    ws.send('ERROR: Could not create user'); // Gửi thông báo lỗi nếu không thể tạo người dùng
+                } 
+            } else {
+                    console.error('Invalid CREATE_USER format. Expected 4 parts but got:', data);
 
-            // Cần kiểm tra dữ liệu có phải là số (NaN) trước khi gửi
-            if (!isNaN(heartRate) && !isNaN(spo2) && !isNaN(objecttemp)) {
-                await saveDataToDatabase(heartRate, spo2, objecttemp); // Lưu dữ liệu vào cơ sở dữ liệu
-                console.log(`Saved to DB - Heart Rate: ${heartRate}, SpO2: ${spo2}, Temp: ${objecttemp}`);
-                // Gửi lại tin nhắn cho client (ví dụ: trình duyệt web) để hiển thị
-                 wss.clients.forEach(client => {
+                }
+                return; // Dừng xử lý tiếp theo
+            }
+
+        const parts = data.split(':');
+        // Chấp nhận dữ liệu có 3 hoặc 4 phần tử
+        if (parts.length === 4) {
+            // Đúng định dạng: userID:heartRate:spo2:objecttemp
+            const userID = parseInt(parts[0]);
+            const heartRate = parseFloat(parts[1]);
+            const spo2 = parseFloat(parts[2]);
+            const objecttemp = parseFloat(parts[3]);
+            if (!isNaN(userID) && userID > 0 && !isNaN(heartRate) && !isNaN(spo2) && !isNaN(objecttemp)) {
+                // Kiểm tra userID có tồn tại trong bảng users
+                try {
+                    const [rows] = await connection.execute('SELECT id FROM users WHERE id = ?', [userID]);
+                    if (rows.length > 0) {
+                        await saveDataToDatabase(userID, heartRate, spo2, objecttemp);
+                        console.log(`Saved to DB - User ID: ${userID}, Heart Rate: ${heartRate}, SpO2: ${spo2}, Temp: ${objecttemp}`);
+                    } else {
+                        console.error(`User ID ${userID} không tồn tại trong bảng users, không lưu dữ liệu.`);
+                    }
+                } catch (err) {
+                    console.error('Lỗi kiểm tra userID:', err);
+                }
+                const webClientData = `${heartRate}:${spo2}:${objecttemp}`;
+                wss.clients.forEach(client => {
                     if (client !== ws && client.readyState === WebSocket.OPEN) {
-                        client.send(data);
+                        client.send(webClientData);
                     }
                 });
             } else {
-                console.error('Dữ liệu bị gửi đi có chứa NaN:', data); 
+                console.error('Dữ liệu bị gửi đi có chứa NaN hoặc userID không hợp lệ:', data);
+            }
+        } else if (parts.length === 3) {
+            // Nếu chỉ có heartRate:spo2:objecttemp, KHÔNG lưu vào DB vì không có userID hợp lệ
+            const heartRate = parseFloat(parts[0]);
+            const spo2 = parseFloat(parts[1]);
+            const objecttemp = parseFloat(parts[2]);
+            if (!isNaN(heartRate) && !isNaN(spo2) && !isNaN(objecttemp)) {
+                console.log('Nhận dữ liệu không có userID, chỉ gửi về client web, không lưu DB.');
+                const webClientData = `${heartRate}:${spo2}:${objecttemp}`;
+                wss.clients.forEach(client => {
+                    if (client !== ws && client.readyState === WebSocket.OPEN) {
+                        client.send(webClientData);
+                    }
+                });
+            } else {
+                console.error('Dữ liệu bị gửi đi có chứa NaN:', data);
             }
         } else {
-            console.error('Dữ liệu không hợp lệ (thiếu phần tử):', data);
-        }   
+            console.error('Dữ liệu không hợp lệ (sai định dạng):', data);
+        }
     });
 
     ws.on('close', () => {

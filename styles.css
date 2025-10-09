@@ -1,255 +1,301 @@
- body {
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            background-attachment: fixed;
-            overflow: auto;
-            position: relative;
-        }
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><radialGradient id="g" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(255,255,255,0.1)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></radialGradient></defs><circle cx="50" cy="50" r="50" fill="url(%23g)"/></svg>') repeat;
-            pointer-events: none;
-            z-index: -1;
-            animation: float 20s ease-in-out infinite;
-        }
-        .container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 2.5em;
-            border-radius: 20px;
-            box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            text-align: center;
-            max-width: 600px;
-            width: 95%;
-            animation: liquidSlide 1.5s ease-out;
-            position: relative;
-            overflow: hidden;
-        }
-        .container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            animation: shimmer 3s infinite;
-        }
-        h1 {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 2em;
-            margin-bottom: 1.5em;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            position: relative;
-            z-index: 1;
-        }
-        .data-card {
-            display: flex;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 1.2em;
-            margin: 1em 0;
-            border-radius: 15px;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            position: relative;
-            overflow: hidden;
-        }
-        .data-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-        .data-card:hover::before {
-            left: 100%;
-        }
-        .data-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 
-                0 12px 40px rgba(0, 0, 0, 0.15),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-        .data-card svg {
-            width: 45px;
-            height: 45px;
-            margin-right: 1em;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-            transition: transform 0.3s ease;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            border-radius: 50%;
-            padding: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .data-card:hover svg {
-            transform: scale(1.1) rotate(5deg);
-        }
-        .data-card p {
-            margin: 0;
-            font-size: 1.4em;
-            color: rgba(255, 255, 255, 0.9);
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-        }
-        .data-card .value {
-            color: #7e2481;
-            font-weight: bold;
-            text-shadow: 0 2px 4px rgba(255, 107, 107, 0.3);
-            animation: liquidPulse 1s ease-in-out infinite alternate;
-        }
-        .tabs {
-            display: flex;
-            justify-content: center;
-            margin: 1em 0;
-        }
-        .tab {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 0.8em 1.5em;
-            margin: 0 0.5em;
-            border-radius: 10px;
-            color: rgba(255, 255, 255, 0.8);
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            position: relative;
-            overflow: hidden;
-        }
-        .tab:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
-        }
-        .tab.active {
-            background: rgba(255, 255, 255, 0.2);
-            color: #fff;
-            border-color: rgba(255, 255, 255, 0.3);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-        .tab::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-        .tab:hover::before {
-            left: 100%;
-        }
-        .chart-container {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 1em;
-            margin: 1em 0;
-            border-radius: 15px;
-            position: relative;
-            overflow: hidden;
-            display: none;
-            animation: chartFade 0.5s ease-in;
-        }
-        .chart-container.active {
-            display: block;
-        }
-        .chart-container canvas {
-            max-height: 200px;
-        }
-        .status {
-            font-size: 1.1em;
-            margin-top: 1em;
-            font-weight: bold;
-            color: rgba(255, 255, 255, 0.8);
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-        }
-        .connected {
-            color: #4ade80;
-            text-shadow: 0 2px 4px rgba(74, 222, 128, 0.3);
-        }
-        .disconnected, .error {
-            color: #f87171;
-            text-shadow: 0 2px 4px rgba(248, 113, 113, 0.3);
-        }
-        @keyframes liquidSlide {
-            from { 
-                opacity: 0; 
-                transform: translateY(30px) scale(0.95); 
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0) scale(1); 
-            }
-        }
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-        @keyframes liquidPulse {
-            0% { 
-                transform: scale(1); 
-                filter: hue-rotate(0deg) brightness(1);
-            }
-            100% { 
-                transform: scale(1.05); 
-                filter: hue-rotate(10deg) brightness(1.1);
-            }
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-        @keyframes chartFade {
-            from { opacity: 0; transform: scale(0.98); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        @media (max-width: 600px) {
-            .container {
-                padding: 1.5em;
-                width: 95%;
-                border-radius: 15px;
-            }
-            h1 {
-                font-size: 1.6em;
-            }
-            .data-card p {
-                font-size: 1.2em;
-            }
-            .data-card svg {
-                width: 35px;
-                height: 35px;
-            }
-            .tab {
-                padding: 0.6em 1em;
-                font-size: 0.9em;
-            }
-            .chart-container canvas {
-                max-height: 150px;
-            }
-        }
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap');
+
+body {
+    font-family: 'Be Vietnam Pro', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Giữ nội dung ở trên */
+    min-height: 100vh;
+    margin: 0;
+    padding: 40px 20px; /* Thêm padding tổng thể */
+    background: linear-gradient(135deg, #f0f2f5, #e0e5ec); /* Nền gradient xám nhạt/trắng */
+    color: #333; /* Chữ màu tối cho nền sáng */
+    transition: background 0.5s ease;
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.6); /* Nền trắng trong suốt */
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08); /* Bóng đổ mềm mại, rõ hơn */
+    backdrop-filter: blur(15px); /* Hiệu ứng blur mạnh hơn */
+    border: 1px solid rgba(255, 255, 255, 0.4); /* Border mỏng nhẹ */
+    width: 90%;
+    max-width: 1200px;
+    margin-bottom: 50px;
+    animation: fadeIn 0.8s ease-out;
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50; /* Màu tiêu đề đậm */
+    margin-bottom: 30px;
+    font-weight: 700;
+    font-size: 2.5em;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Bóng chữ nhẹ */
+}
+
+h2 {
+    color: #5d6d7e; /* Màu phụ đề */
+    margin-top: 0;
+    font-size: 1.3em;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Đường kẻ mỏng, màu tối */
+    margin-bottom: 20px;
+}
+
+/* --- TRẠNG THÁI KẾT NỐI --- */
+#status {
+    display: inline-block;
+    padding: 6px 15px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+.status.connected {
+    background-color: #4CAF50; /* Xanh lá cây */
+    color: white;
+}
+.status.disconnected, .status.error {
+    background-color: #F44336; /* Đỏ */
+    color: white;
+}
+
+/* --- QUẢN LÝ NGƯỜI DÙNG --- */
+.user-managerment {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    padding: 25px;
+    background: rgba(255, 255, 255, 0.7); /* Nền Liquid Glass nhẹ */
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+#currentUserDisplay {
+    margin-bottom: 15px;
+    font-size: 1.1em;
+    color: #333;
+}
+#current-user-name { font-weight: 600; color: #2c3e50; }
+#current-user-id { font-weight: 600; color: #5d6d7e; }
+#userMessage {
+    font-style: italic;
+    min-height: 1.2em;
+    margin: 10px 0 15px 0;
+    color: #333;
+}
+
+/* Form inputs */
+.user-managerment form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+.user-managerment form input,
+.user-managerment form select {
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1); /* Border màu tối */
+    background: rgba(255, 255, 255, 0.8); /* Nền input hơi trong suốt */
+    color: #333;
+    font-size: 1em;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+.user-managerment form input::placeholder,
+.user-managerment form select option[disabled] {
+    color: #999;
+}
+.user-managerment form input:focus,
+.user-managerment form select:focus {
+    border-color: #6a8dff; /* Màu focus xanh */
+    box-shadow: 0 0 0 3px rgba(106, 141, 255, 0.2);
+    outline: none;
+    background: white;
+}
+.user-managerment form button {
+    grid-column: span var(--form-cols, 1); /* Điều chỉnh để nút chiếm hết chiều rộng nếu cần */
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    background: #6a8dff; /* Nút màu xanh */
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 1.05em;
+    transition: background 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+.user-managerment form button:hover {
+    background: #5377ea;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* --- DATA CARDS --- */
+.data-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.data-card {
+    background: rgba(255, 255, 255, 0.7); /* Nền Liquid Glass nhẹ */
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.data-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.data-card svg {
+    width: 45px;
+    height: 45px;
+    margin-bottom: 15px;
+}
+.data-card p {
+    font-size: 1.1em;
+    color: #4a4a4a;
+    margin: 0;
+    font-weight: 500;
+}
+.data-card .value {
+    font-size: 2.5em;
+    font-weight: 700;
+    margin-left: 10px;
+    vertical-align: middle;
+    color: #2c3e50; /* Màu giá trị chính */
+}
+.data-card .unit {
+    font-size: 0.6em;
+    vertical-align: middle;
+    color: #7f8c8d;
+}
+
+/* Specific colors for cards */
+.data-card.heart-rate p .value { color: #e74c3c; } /* Đỏ */
+.data-card.spo2 p .value { color: #2ecc71; } /* Xanh lá */
+.data-card.objecttemp p .value { color: #f39c12; } /* Vàng cam */
+
+/* --- BIỂU ĐỒ VÀ TABS --- */
+.charts-section {
+    margin-top: 40px;
+    padding: 25px;
+    background: rgba(255, 255, 255, 0.7); /* Nền Liquid Glass nhẹ */
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.charts-section h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    border-bottom: none; /* Bỏ đường kẻ dưới cho tiêu đề biểu đồ */
+}
+
+.tabs-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 25px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    padding: 5px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.tab {
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: 500;
+    color: #7f8c8d; /* Màu chữ tab không active */
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    flex-grow: 1; /* Cho phép tab mở rộng đều */
+    text-align: center;
+}
+
+.tab:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: #333;
+}
+
+.tab.active {
+    background: #6a8dff; /* Màu xanh chủ đạo cho tab active */
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.chart-container {
+    display: none;
+    padding: 10px;
+    animation: chartFade 0.6s ease-out;
+}
+.chart-container.active {
+    display: block;
+}
+
+/* --- ANIMATIONS --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes liquidPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.9; }
+}
+
+@keyframes chartFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    h1 {
+        font-size: 2em;
+    }
+    h2 {
+        font-size: 1.1em;
+    }
+    .data-cards-grid {
+        grid-template-columns: 1fr;
+    }
+    .user-managerment form {
+        grid-template-columns: 1fr;
+    }
+    .user-managerment form button {
+        grid-column: span 1;
+    }
+    .data-card .value {
+        font-size: 2em;
+    }
+    .tabs-container {
+        flex-direction: column; /* Xếp tabs dọc trên màn hình nhỏ */
+    }
+    .tab {
+        margin-bottom: 5px;
+    }
+}
