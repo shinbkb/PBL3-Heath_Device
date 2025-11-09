@@ -299,3 +299,13 @@ h2 {
         margin-bottom: 5px;
     }
 }
+.data-card.alert-active{        /* Hiệu ứng cảnh báo */
+    background: rgba(255, 230, 230, 0.8);
+    border: 1px solid #ff4d4d;
+    animation: pulse-alert 1.2 infinite ease-in-out; /* Tăng cường hiệu ứng cảnh báo */
+}
+
+@keyframes pulse-alert {    /* Hiệu ứng cảnh báo nhấp nháy */
+    0%, 100% { box-shadow: 0 0 10px rgba(255, 0, 0, 0.6); }
+    50% { box-shadow: 0 0 20px rgba(255, 0, 0, 1); }
+}

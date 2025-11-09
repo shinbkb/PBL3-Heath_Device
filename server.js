@@ -51,6 +51,36 @@ async function createUser(username, fullname, age, gender) {        // Hàm tạ
         return null;
     }
 }
+async function getAllUsers() {        // Hàm lấy tất cả người dùng
+    if (!connection) return [];     // Nếu chưa kết nối DB, trả về mảng rỗng
+    try {
+        const [rows] = await connection.execute('SELECT id, username FROM users ORDER BY id DESC');     // Lấy id và username từ bảng users, sắp xếp theo id giảm dần
+        return rows; // Trả về danh sách người dùng
+    }   catch (error) {      // Ghi lỗi nếu có lỗi xảy ra
+        console.error('Error getting users:', error);   // Ghi lỗi nếu có lỗi xảy ra
+        return [];      // Trả về mảng rỗng nếu có lỗi
+    }
+}
+
+async function getHistoryData(userID) {     // Hàm lấy dữ liệu lịch sử cho một userID cụ thể
+    if (!connection) return [];     // Nếu chưa kết nối DB, trả về mảng rỗng
+    try {
+        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000); // Lấy thời gian cách đây 24 giờ
+        const query = `
+            SELECT heartRate AS heart_rate, spo2, temperature, timer AS timestamp           
+            FROM max30102
+            WHERE user_id = ? AND timer >= ?
+            ORDER BY timer DESC
+            LIMIT 500
+        `;  // Truy vấn lấy dữ liệu lịch sử trong 24 giờ qua cho userID cụ thể.
+        const [rows] = await connection.execute(query, [userID, sevenDaysAgo]);   // Thực thi truy vấn với tham số userID và thời gian
+        return rows.reverse(); // Trả về dữ liệu lịch sử
+
+    } catch (error) {      // Ghi lỗi nếu có lỗi xảy ra
+        console.error('Error getting history data:', error);
+        return [];      // Trả về mảng rỗng nếu có lỗi
+    }
+}
 // Tạo WebSocket server
 const wss = new WebSocket.Server({ port: 3030 });
 connectToDatabase(); // Kết nối đến cơ sở dữ liệu khi khởi động server
@@ -59,6 +89,9 @@ console.log('WebSocket server is running on port 3030');
 wss.on('connection', ws => {
     console.log('Client connected');
 
+    getAllUsers().then(users => {       // Lấy tất cả người dùng khi có kết nối mới
+        ws.send(`USERS_LIST:${JSON.stringify(users)}`); // Gửi danh sách người dùng cho client mới kết nối
+    });
     // Không cần async nữa vì không có await
     ws.on('message', async(message) => { 
         const data = message.toString();
@@ -82,6 +115,14 @@ wss.on('connection', ws => {
                 }
                 return; // Dừng xử lý tiếp theo
             }
+        if (data.startsWith('GET_HISTORY:')) {      //Kiểm tra nếu tin nhắn bắt đầu bằng 'GET_HISTORY:'
+            const userID = parseInt(data.substring('GET_HISTORY:'.length));    // Lấy userID từ tin nhắn
+            if (!isNaN(userID) && userID >0) {
+                const historyData = await getHistoryData(userID); // Lấy dữ liệu lịch sử từ cơ sở dữ liệu   
+                ws.send(`HISTORY_DATA:${JSON.stringify(historyData)}`); // Gửi dữ liệu lịch sử về client
+            }
+            return; // Dừng xử lý tiếp theo    
+            } 
 
         const parts = data.split(':');
         // Chấp nhận dữ liệu có 3 hoặc 4 phần tử

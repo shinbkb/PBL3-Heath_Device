@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Giám Sát Sức Khỏe</title>
     <link rel="stylesheet" href="styles.css">
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script> 
+...
     <script src="script.js" defer></script>
 </head>
 <body>
@@ -37,7 +40,13 @@
                 <button type="submit">Tạo Người Dùng Mới</button>
             </form>
         </div>
-
+        <div id="user-selection" style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+            <select id="existingUsersSelect">
+                <option value="" disabled selected>Chọn người dùng để giám sát</option>
+            </select>
+            <button id="setCurrentUserBtn" type="button">Chọn</button>
+            <span id="currentSelectionStatus" style="margin-left:12px;color:#2c3e50;">Chưa có người dùng được chọn</span>
+        </div>
         <div class="data-cards-grid">
             <div class="data-card heart-rate">
                 <svg viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="2">
@@ -77,7 +86,26 @@
                 <canvas id="objecttempChart"></canvas>
             </div>
         </div>
+        <div class="history-section">
+            <h2>Lịch sử dữ liệu</h2>
+            <div class="history-controls">
+                <select id = "historyUserIdSelect">
+                    <option value="" disabled selected>Chọn Người Dùng</option>
+                </select>
+               
+                <button id="loadHistoryBtn">Tải Dữ Liệu Lịch Sử</button>
+            </div>
+            <p id="historyMessage" class="message-info" style="margin-top: 10px;"></p>
 
+            <div id="historyResults">
+                <div class="charts-section" style="margin-top: 20px; padding: 0; background: none; box-shadow: none">
+                    <h3>Lịch Sử Nhịp Tim 24h Qua</h3>
+                    <div class="chart-container active">
+                        <canvas id="historyHeartRateChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>
