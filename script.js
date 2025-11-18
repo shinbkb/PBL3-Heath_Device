@@ -4,7 +4,6 @@ window.addEventListener('DOMContentLoaded', (event) => {        // Đảm bảo 
         const currentUserIdElement = document.getElementById('current-user-id'); // Phần tử hiển thị ID người dùng hiện tại
         const userMessageElement = document.getElementById('userMessage'); // Phần tử hiển thị thông báo người dùng
         const createUserForm = document.getElementById('createUserForm'); // Form tạo người dùng mới
-        const currentUserDisplay = document.getElementById('currentUserDisplay'); // Phần tử hiển thị người dùng hiện tại trong UI chọn người dùng
         const setCurrentUserBtn = document.getElementById('setCurrentUserBtn'); // Nút đặt người dùng hiện tại
         const existingUsersSelect = document.getElementById('existingUsersSelect'); // Dropdown chọn người dùng hiện có
         const currentSelectionStatus = document.getElementById('currentSelectionStatus'); // Phần tử hiển thị trạng thái lựa chọn hiện tại
@@ -16,8 +15,13 @@ window.addEventListener('DOMContentLoaded', (event) => {        // Đảm bảo 
             Temp_high: 38 // Ngưỡng nhiệt độ cao
 
         };
+        const modalOverlays = document.querySelectorAll('.modal-overlay');      // Lớp phủ modal
+        const modalCloseButtons = document.querySelectorAll('.modal-close');        // Nút đóng modal
+        const modalTriggers = document.querySelectorAll('.modal-trigger');      // Trình kích hoạt modal
+       
 
-        (function restoreSavedUser() {
+        
+        (function restoreSavedUser() {      // Hàm khôi phục người dùng đã lưu từ localStorage
             const saved = localStorage.getItem('selectedUserID');
             if (saved) {
                 const id = parseInt(saved,10); // Phân tích chuỗi lưu trong localStorage thành số nguyên
@@ -58,8 +62,9 @@ window.addEventListener('DOMContentLoaded', (event) => {        // Đảm bảo 
             currentUserID = parseInt(val, 10); // Chuyển đổi giá trị sang số nguyên
             localStorage.setItem('selectedUserID', String(currentUserID)); // Lưu vào localStorage
 
-            const displayElement = document.getElementById('currentSerUserDisplay') || document.getElementById('currentUserDisplay'); // Phần tử hiển thị người dùng hiện tại trong UI chọn người dùng
-            if (displayElement) displayElement.textContent = `Đang giám sát User ID: ${currentUserID}`; // Cập nhật hiển thị người dùng hiện tại
+            if (currentSelectionStatus) {
+                currentSelectionStatus.textContent = `Đang giám sát User ID: ${currentUserID}`; // Cập nhật hiển thị người dùng hiện tại
+            }
   
             const currentUserNameElement = document.getElementById('current-user-name'); // Phần tử hiển thị tên người dùng hiện tại
             const currentUserIdElement = document.getElementById('current-user-id'); // Phần tử hiển thị ID người dùng hiện tại
@@ -301,6 +306,40 @@ window.addEventListener('DOMContentLoaded', (event) => {        // Đảm bảo 
                 tempCard.classList.remove('alert-active'); // Xóa lớp cảnh báo
             }
         }
+            
+        function openModal(modalId) {     // Hàm mở modal
+            const modal = document.getElementById(modalId); // Lấy modal theo ID
+            if (modal) {        // Kiểm tra nếu modal tồn tại
+                modal.classList.add('active'); // Thêm lớp hoạt động để hiển thị modal
+            }
+        }
+
+        function closeModal(modal) {        // Hàm đóng modal
+            if (modal) {        // Kiểm tra nếu modal tồn tại
+                modal.classList.remove('active'); // Xóa lớp hoạt động để ẩn modal
+            }
+        }
+        modalTriggers.forEach(trigger => {
+            trigger.addEventListener('click', () => {
+                const modalId= trigger.getAttribute('data-modal-target'); // Lấy ID modal từ thuộc tính data
+                openModal(modalId); // Mở modal tương ứng
+            });
+        });
+
+        modalCloseButtons.forEach(button => {      // Thêm sự kiện đóng modal cho tất cả nút đóng
+            button.addEventListener('click', () => {
+                const modal = button.closest('.modal-overlay'); // Tìm modal cha gần nhất
+                closeModal(modal); // Đóng modal
+            });
+        }); 
+        modalOverlays.forEach(overlay => {        // Thêm sự kiện đóng modal khi nhấp vào lớp phủ
+            overlay.addEventListener('click', (event) => {
+                if (event.target === overlay) { // Chỉ đóng nếu nhấp vào lớp phủ, không phải nội dung modal
+                    closeModal(overlay); // Đóng modal
+                }
+            });
+        });
+        
             // Xử lý khi submit form tạo người dùng mới
         createUserForm.addEventListener('submit', function(event) { // Xử lý khi submit form
             event.preventDefault(); // Ngăn chặn hành vi tải lại trang
@@ -446,6 +485,11 @@ window.addEventListener('DOMContentLoaded', (event) => {        // Đảm bảo 
                     currentUserIdElement.textContent = currentUserID; // Hiển thị ID người dùng hiện tại
                     userMessageElement.textContent = 'Tạo người dùng thành công!' ; // Thông báo thành công 
                     userMessageElement.style.color = '#4ade80'; // Màu xanh lá
+                    if (currentSelectionStatus) {
+                        currentSelectionStatus.textContent = `Đang giám sát User ID: ${currentUserID}`; // Cập nhật hiển thị người dùng hiện tại
+                    }
+                    // Lưu userID mới tạo vào localStorage
+                    localStorage.setItem('selectedUserID', String(currentUserID)); // Lưu vào localStorage
                 }
                 return; // Dừng xử lý tiếp theo
             } else if (data === 'ERROR: Could not create user') {
@@ -521,4 +565,15 @@ window.addEventListener('DOMContentLoaded', (event) => {        // Đảm bảo 
             statusElement.textContent = 'Lỗi kết nối';
             statusElement.className = 'status error';
         };
+    
+
+        modalOverlays.forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) { // Chỉ đóng khi nhấn vào lớp phủ, không phải nội dung modal
+                    closeModal(modal);
+                }
+            });
+        });
+
+  
 });// Đảm bảo mã chạy sau khi DOM tải xong

@@ -1,46 +1,46 @@
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap');
 
+/* --- SỬA CSS BODY VÀ CONTAINER --- */
 body {
     font-family: 'Be Vietnam Pro', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-    display: flex;
-    justify-content: center;
-    align-items: flex-start; /* Giữ nội dung ở trên */
-    min-height: 100vh;
+    display: flex; /* Dùng flex để chia cột */
     margin: 0;
-    padding: 40px 20px; /* Thêm padding tổng thể */
-    background: linear-gradient(135deg, #f0f2f5, #e0e5ec); /* Nền gradient xám nhạt/trắng */
-    color: #333; /* Chữ màu tối cho nền sáng */
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f0f2f5, #e0e5ec);
+    color: #333;
     transition: background 0.5s ease;
 }
-
-.container {
-    background: rgba(255, 255, 255, 0.6); /* Nền trắng trong suốt */
+/* Đổi tên class cho container chính */
+.container-main { 
+    background: rgba(255, 255, 255, 0.6);
     padding: 30px;
     border-radius: 20px;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08); /* Bóng đổ mềm mại, rõ hơn */
-    backdrop-filter: blur(15px); /* Hiệu ứng blur mạnh hơn */
-    border: 1px solid rgba(255, 255, 255, 0.4); /* Border mỏng nhẹ */
-    width: 90%;
-    max-width: 1200px;
-    margin-bottom: 50px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    width: auto; /* Để nó tự co giãn */
+    max-width: 1400px; /* Tăng max-width nếu muốn */
+    /* Thêm margin thay vì padding/align của body */
+    margin: 40px 40px 50px 40px; 
     animation: fadeIn 0.8s ease-out;
 }
 
+
 h1 {
     text-align: center;
-    color: #2c3e50; /* Màu tiêu đề đậm */
+    color: #2c3e50;
     margin-bottom: 30px;
     font-weight: 700;
     font-size: 2.5em;
-    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Bóng chữ nhẹ */
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 h2 {
-    color: #5d6d7e; /* Màu phụ đề */
+    color: #5d6d7e;
     margin-top: 0;
     font-size: 1.3em;
     padding-bottom: 12px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Đường kẻ mỏng, màu tối */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
 }
 
@@ -54,24 +54,19 @@ h2 {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 .status.connected {
-    background-color: #4CAF50; /* Xanh lá cây */
+    background-color: #4CAF50;
     color: white;
 }
 .status.disconnected, .status.error {
-    background-color: #F44336; /* Đỏ */
+    background-color: #F44336;
     color: white;
 }
 
-/* --- QUẢN LÝ NGƯỜI DÙNG --- */
+/* --- QUẢN LÝ NGƯỜI DÙNG (BÊN TRONG MODAL) --- */
 .user-managerment {
-    margin-top: 30px;
-    margin-bottom: 30px;
-    padding: 25px;
-    background: rgba(255, 255, 255, 0.7); /* Nền Liquid Glass nhẹ */
-    border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    /* Style này giờ dùng cho modal, không cần nền/bóng đổ */
+    margin: 0;
+    padding: 0;
 }
 #currentUserDisplay {
     margin-bottom: 15px;
@@ -87,7 +82,7 @@ h2 {
     color: #333;
 }
 
-/* Form inputs */
+/* Form inputs (Không đổi) */
 .user-managerment form {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -98,30 +93,26 @@ h2 {
 .user-managerment form select {
     padding: 12px 15px;
     border-radius: 8px;
-    border: 1px solid rgba(0, 0, 0, 0.1); /* Border màu tối */
-    background: rgba(255, 255, 255, 0.8); /* Nền input hơi trong suốt */
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(240, 242, 245, 0.8); /* Nền input xám nhạt */
     color: #333;
     font-size: 1em;
     transition: all 0.3s ease;
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
 }
-.user-managerment form input::placeholder,
-.user-managerment form select option[disabled] {
-    color: #999;
-}
 .user-managerment form input:focus,
 .user-managerment form select:focus {
-    border-color: #6a8dff; /* Màu focus xanh */
+    border-color: #6a8dff;
     box-shadow: 0 0 0 3px rgba(106, 141, 255, 0.2);
     outline: none;
     background: white;
 }
 .user-managerment form button {
-    grid-column: span var(--form-cols, 1); /* Điều chỉnh để nút chiếm hết chiều rộng nếu cần */
+    grid-column: span var(--form-cols, 1);
     padding: 12px 20px;
     border: none;
     border-radius: 8px;
-    background: #6a8dff; /* Nút màu xanh */
+    background: #6a8dff;
     color: white;
     font-weight: 600;
     cursor: pointer;
@@ -132,19 +123,18 @@ h2 {
 .user-managerment form button:hover {
     background: #5377ea;
     transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
 }
 
-/* --- DATA CARDS --- */
+
+/* --- DATA CARDS (Không đổi) --- */
 .data-cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 25px;
     margin-bottom: 30px;
 }
-
 .data-card {
-    background: rgba(255, 255, 255, 0.7); /* Nền Liquid Glass nhẹ */
+    background: rgba(255, 255, 255, 0.7);
     padding: 25px;
     border-radius: 15px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
@@ -161,54 +151,43 @@ h2 {
     transform: translateY(-5px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
+/* Style Cảnh báo (Đã thêm ở bước trước) */
+.data-card.alert-active {
+    background: rgba(244, 67, 54, 0.1); 
+    border: 1px solid #F44336;
+    animation: pulse-alert 1.2s infinite ease-in-out;
+}
+@keyframes pulse-alert {
+    0% { box-shadow: 0 5px 20px rgba(244, 67, 54, 0.1); transform: translateY(0); }
+    50% { box-shadow: 0 8px 30px rgba(244, 67, 54, 0.5); transform: translateY(-2px); }
+    100% { box-shadow: 0 5px 20px rgba(244, 67, 54, 0.1); transform: translateY(0); }
+}
+/* (Các style data-card khác... không đổi) */
+.data-card svg { width: 45px; height: 45px; margin-bottom: 15px; }
+.data-card p { font-size: 1.1em; color: #4a4a4a; margin: 0; font-weight: 500; }
+.data-card .value { font-size: 2.5em; font-weight: 700; margin-left: 10px; vertical-align: middle; color: #2c3e50; }
+.data-card .unit { font-size: 0.6em; vertical-align: middle; color: #7f8c8d; }
+.data-card.heart-rate p .value { color: #e74c3c; }
+.data-card.spo2 p .value { color: #2ecc71; }
+.data-card.objecttemp p .value { color: #f39c12; }
 
-.data-card svg {
-    width: 45px;
-    height: 45px;
-    margin-bottom: 15px;
-}
-.data-card p {
-    font-size: 1.1em;
-    color: #4a4a4a;
-    margin: 0;
-    font-weight: 500;
-}
-.data-card .value {
-    font-size: 2.5em;
-    font-weight: 700;
-    margin-left: 10px;
-    vertical-align: middle;
-    color: #2c3e50; /* Màu giá trị chính */
-}
-.data-card .unit {
-    font-size: 0.6em;
-    vertical-align: middle;
-    color: #7f8c8d;
-}
 
-/* Specific colors for cards */
-.data-card.heart-rate p .value { color: #e74c3c; } /* Đỏ */
-.data-card.spo2 p .value { color: #2ecc71; } /* Xanh lá */
-.data-card.objecttemp p .value { color: #f39c12; } /* Vàng cam */
-
-/* --- BIỂU ĐỒ VÀ TABS --- */
+/* --- BIỂU ĐỒ VÀ TABS (Không đổi) --- */
 .charts-section {
     margin-top: 40px;
     padding: 25px;
-    background: rgba(255, 255, 255, 0.7); /* Nền Liquid Glass nhẹ */
+    background: rgba(255, 255, 255, 0.7);
     border-radius: 15px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
     backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.5);
 }
-
 .charts-section h2 {
     text-align: center;
     color: #2c3e50;
     margin-bottom: 25px;
-    border-bottom: none; /* Bỏ đường kẻ dưới cho tiêu đề biểu đồ */
+    border-bottom: none;
 }
-
 .tabs-container {
     display: flex;
     justify-content: center;
@@ -218,50 +197,142 @@ h2 {
     padding: 5px;
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
 }
-
 .tab {
     padding: 10px 20px;
     cursor: pointer;
     font-weight: 500;
-    color: #7f8c8d; /* Màu chữ tab không active */
+    color: #7f8c8d;
     border-radius: 8px;
     transition: all 0.3s ease;
-    flex-grow: 1; /* Cho phép tab mở rộng đều */
+    flex-grow: 1;
     text-align: center;
 }
-
-.tab:hover {
-    background: rgba(0, 0, 0, 0.05);
-    color: #333;
-}
-
+.tab:hover { background: rgba(0, 0, 0, 0.05); color: #333; }
 .tab.active {
-    background: #6a8dff; /* Màu xanh chủ đạo cho tab active */
+    background: #6a8dff;
     color: white;
     font-weight: 600;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
+.chart-container { display: none; padding: 10px; animation: chartFade 0.6s ease-out; }
+.chart-container.active { display: block; }
 
-.chart-container {
-    display: none;
-    padding: 10px;
-    animation: chartFade 0.6s ease-out;
-}
-.chart-container.active {
-    display: block;
+
+
+/* --- CSS CHO MODAL (POP-UP) --- */
+.modal-overlay {
+    position: fixed; /* Nằm cố định trên màn hình */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6); /* Màu đen mờ */
+    z-index: 1000; /* Hiển thị trên cùng */
+    
+    /* Dùng flex để căn giữa hộp thoại */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /* Ẩn đi mặc định */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-/* --- ANIMATIONS --- */
+.modal-overlay.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+.modal-content {
+   background: #f0f2f5; /* Nền sáng giống body */
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 600px; /* Giới hạn độ rộng tối đa */
+    position: relative; /* Để định vị nút close */
+
+    /* Hiệu ứng trượt vào */
+    transform: translateY(-30px);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal-content {
+   transform: translateY(0);
+}
+
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 2.5rem; /* Kích thước dấu X */
+    color: #999;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s ease;
+}
+.modal-close:hover {
+    color: #333;
+}
+
+/* Style cho nội dung bên trong modal (tận dụng class cũ) */
+.modal-content .user-managerment,
+.modal-content .sidebar-widget {
+    background: none;
+    box-shadow: none;
+    padding: 0;
+    border: none;
+    backdrop-filter: none;
+}
+.modal-content .sidebar-widget h3 {
+    margin-top: 0;
+    color: #5d6d7e;
+    font-size: 1.1em;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+}
+.modal-content .sidebar-widget {
+    margin-top: 25px;
+    border-top: 1px solid #eee;
+    padding-top: 25px;
+}
+.modal-trigger {
+    cursor: pointer;
+}
+/* Căn chỉnh các nút và select trong modal cho đẹp hơn */
+.modal-content .sidebar-widget select,
+.modal-content .sidebar-widget button {
+    width: 100%;
+    padding: 12px 15px;
+    margin-top: 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    font-size: 1em;
+}
+.modal-content .sidebar-widget button {
+    border: none;
+    background: #6a8dff;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+.modal-content .sidebar-widget button:hover {
+    background: #5377ea;
+}
+
+
+/* --- ANIMATIONS (Không đổi) --- */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
-
-@keyframes liquidPulse {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.05); opacity: 0.9; }
-}
-
+@keyframes liquidPulse { /* (Đã bị xóa ở bước trước, thêm lại nếu cần) */ }
 @keyframes chartFade {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -269,43 +340,155 @@ h2 {
 
 /* --- RESPONSIVE --- */
 @media (max-width: 768px) {
-    .container {
-        padding: 20px;
+    body {
+        padding-left: 0; /* Xóa padding trái */
+    }
+
+    .icon-sidebar {
+        /* Chuyển icon bar xuống dưới cùng */
         width: 100%;
-        margin-bottom: 20px;
+        height: 70px;
+        bottom: 0;
+        top: auto; /* Hủy cố định top */
+        flex-direction: row; /* Xếp icon ngang */
+        justify-content: space-around;
+        padding-top: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
     }
-    h1 {
-        font-size: 2em;
+    
+    .sidebar-icon {
+        margin-bottom: 0;
     }
-    h2 {
-        font-size: 1.1em;
+
+    .container-main {
+        /* Thêm padding dưới để không bị icon bar che */
+        margin: 15px;
+        padding: 20px;
+        padding-bottom: 80px; /* Khoảng trống cho nav bar dưới */
     }
-    .data-cards-grid {
-        grid-template-columns: 1fr;
-    }
-    .user-managerment form {
-        grid-template-columns: 1fr;
-    }
-    .user-managerment form button {
-        grid-column: span 1;
-    }
-    .data-card .value {
-        font-size: 2em;
-    }
-    .tabs-container {
-        flex-direction: column; /* Xếp tabs dọc trên màn hình nhỏ */
-    }
-    .tab {
-        margin-bottom: 5px;
+    
+    h1 { font-size: 2em; }
+    h2 { font-size: 1.1em; }
+    .data-cards-grid { grid-template-columns: 1fr; }
+    .user-managerment form { grid-template-columns: 1fr; }
+    .user-managerment form button { grid-column: span 1; }
+    .data-card .value { font-size: 2em; }
+    .tabs-container { flex-direction: column; }
+    .tab { margin-bottom: 5px; }
+
+    .modal-content {
+        max-width: 90%;
+        padding: 25px 20px;
     }
 }
-.data-card.alert-active{        /* Hiệu ứng cảnh báo */
-    background: rgba(255, 230, 230, 0.8);
-    border: 1px solid #ff4d4d;
-    animation: pulse-alert 1.2 infinite ease-in-out; /* Tăng cường hiệu ứng cảnh báo */
+.left-sidebar {
+    width: 260px; /* Độ rộng của sidebar */
+    background: #1e293b; /* Màu nền tối (Dark) */
+    color: #cbd5e1; /* Màu chữ sáng */
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0; /* Không cho sidebar co lại */
 }
 
-@keyframes pulse-alert {    /* Hiệu ứng cảnh báo nhấp nháy */
-    0%, 100% { box-shadow: 0 0 10px rgba(255, 0, 0, 0.6); }
-    50% { box-shadow: 0 0 20px rgba(255, 0, 0, 1); }
+.sidebar-logo {
+    margin-bottom: 30px;
+    text-align: center;
+    padding: 10px 10px; /* Thêm padding */
+    display: flex;         /* Dùng flexbox để xếp ngang */
+    align-items: center;    /* Căn giữa theo chiều dọc */
+    justify-content: flex-start; /* Căn giữa theo chiều ngang */
+    gap: 10px;
+}
+
+.sidebar-logo img {
+    max-width: 150px; /* Tùy chỉnh logo */
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    width: 120px;
+    max-height: 70px;
+    object-fit: contain;
+}
+.sidebar-logo span {
+    font-size: 1.1rem;      /* Kích thước chữ */
+    font-weight: 600;       /* Độ đậm */
+    color: #ffffff;         /* Màu chữ trắng (cho nền tối) */
+    white-space: nowrap;    /* Ngăn chữ xuống dòng */
+}
+.nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1; /* Đẩy footer xuống dưới */
+}
+
+.nav-item a {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #cbd5e1; /* Màu chữ */
+    font-weight: 500;
+    margin-bottom: 8px;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.nav-item a svg {
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+/* Hiệu ứng khi hover */
+.nav-item a:hover {
+    background: #334155;
+    color: #ffffff;
+}
+
+/* Mục đang được chọn (active) */
+.nav-item.active a {
+    background: #6a8dff; /* Dùng màu xanh chủ đạo của bạn */
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.sidebar-footer {
+    border-top: 1px solid #334155;
+    padding-top: 20px;
+}
+
+.sidebar-footer a {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    text-decoration: none;
+    color: #94a3b8;
+    font-weight: 500;
+    border-radius: 10px;
+}
+
+.sidebar-footer a:hover {
+    color: #ffffff;
+    background: #334155;
+}
+
+/* --- VÙNG NỘI DUNG TRANG (PAGE CONTENT) --- */
+
+.page-content {
+    flex: 1; /* Cho phép nội dung chính lấp đầy phần còn lại */
+    padding: 0; /* Xóa padding cũ của body */
+    overflow-y: auto; /* Thêm cuộn nếu nội dung dài */
+}
+
+/* Ghi đè padding cũ của body cho .container */
+.page-content .container {
+    padding: 40px 30px;
+    max-width: 100%; /* Cho phép container chiếm 100% .page-content */
+}
+@keyframes liquidPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
 }
