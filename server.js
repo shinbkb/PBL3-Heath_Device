@@ -29,7 +29,7 @@ async function saveDataToDatabase(userID,heartRate, spo2, objecttemp) { // Hàm 
         return;
     }
     try {
-        const query = 'INSERT INTO max30102 (user_id, heartRate, spo2, temperature) VALUES (?, ?, ?, ?)';
+        const query = 'INSERT INTO sensor (user_id, heartRate, spo2, temperature) VALUES (?, ?, ?, ?)';
         const [results] = await connection.execute(query, [userID, heartRate, spo2, objecttemp]);
         console.log('Data saved to database:', results);
     } catch (error) {
@@ -65,15 +65,14 @@ async function getAllUsers() {        // Hàm lấy tất cả người dùng
 async function getHistoryData(userID) {     // Hàm lấy dữ liệu lịch sử cho một userID cụ thể
     if (!connection) return [];     // Nếu chưa kết nối DB, trả về mảng rỗng
     try {
-        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000); // Lấy thời gian cách đây 24 giờ
         const query = `
             SELECT heartRate AS heart_rate, spo2, temperature, timer AS timestamp           
-            FROM max30102
-            WHERE user_id = ? AND timer >= ?
+            FROM sensor
+            WHERE user_id = ?
             ORDER BY timer DESC
-            LIMIT 500
+            LIMIT 2000
         `;  // Truy vấn lấy dữ liệu lịch sử trong 24 giờ qua cho userID cụ thể.
-        const [rows] = await connection.execute(query, [userID, sevenDaysAgo]);   // Thực thi truy vấn với tham số userID và thời gian
+        const [rows] = await connection.execute(query, [userID]);   // Thực thi truy vấn với tham số userID và thời gian
         return rows.reverse(); // Trả về dữ liệu lịch sử
 
     } catch (error) {      // Ghi lỗi nếu có lỗi xảy ra
