@@ -49,10 +49,10 @@ window.addEventListener('DOMContentLoaded', (event) => {        // Đảm bảo 
             }
         }
 
-        if (setCurrentUserBtn && existingUsersSelect) {
+        if (setCurrentUserBtn && existingUsersSelect) { // Kiểm tra nếu phần tử tồn tại
         setCurrentUserBtn.addEventListener('click', () => {        // Sự kiện khi nhấn nút đặt người dùng hiện tại
             const val = existingUsersSelect.value;      // Lấy giá trị đã chọn
-            if (!val) {
+            if (!val) {     // Kiểm tra nếu chưa chọn
                 alert('Vui lòng chọn một người dùng từ danh sách.'); // Thông báo nếu chưa chọn
                 return;
             } 
@@ -62,7 +62,7 @@ window.addEventListener('DOMContentLoaded', (event) => {        // Đảm bảo 
             currentUserID = parseInt(val, 10); // Chuyển đổi giá trị sang số nguyên
             localStorage.setItem('selectedUserID', String(currentUserID)); // Lưu vào localStorage
 
-            if (currentSelectionStatus) {
+            if (currentSelectionStatus) {       // Nếu phần tử hiển thị trạng thái lựa chọn hiện tại tồn tại
                 currentSelectionStatus.textContent = `Đang giám sát User ID: ${currentUserID}`; // Cập nhật hiển thị người dùng hiện tại
             }
   
@@ -79,8 +79,8 @@ window.addEventListener('DOMContentLoaded', (event) => {        // Đảm bảo 
     }
     window.populateExistingUsers = populateExistingUsers; // Đăng ký hàm toàn cục để sử dụng bên ngoài
  // Khởi tạo Chart.js cho nhịp tim
-        const heartRateCtx = document.getElementById('heartRateChart').getContext('2d');
-        const heartRateChart = new Chart(heartRateCtx, {
+        const heartRateCtx = document.getElementById('heartRateChart').getContext('2d');        // Lấy ngữ cảnh vẽ từ phần tử canvas
+        const heartRateChart = new Chart(heartRateCtx, {        // Tạo biểu đồ mới
             type: 'line',
             data: {
                 labels: Array(20).fill(''),
@@ -167,7 +167,7 @@ window.addEventListener('DOMContentLoaded', (event) => {        // Đảm bảo 
         });
         // Khởi tạo Chart.js cho Nhiệt độ (Thêm đoạn code này)
         const objecttempCtx = document.getElementById('objecttempChart').getContext('2d');
-        const objecttempChart = new Chart(objecttempCtx, {
+        const objecttempChart = new Chart(objecttempCtx, {      // Tạo biểu đồ mới
             type: 'line',
             data: {
                 labels: Array(20).fill(''),
@@ -258,7 +258,7 @@ window.addEventListener('DOMContentLoaded', (event) => {        // Đảm bảo 
             }
         });
         // Hàm chuyển đổi tab
-        function showChart(chartType) {
+        function showChart(chartType) {     // Hàm hiển thị biểu đồ dựa trên loại biểu đồ được chọn
             const heartRateContainer = document.getElementById('heartRateChartContainer'); // Nhịp tim
             const spo2Container = document.getElementById('spo2ChartContainer'); // SpO2
             const objecttempContainer = document.getElementById('objecttempChartContainer'); // Nhiệt độ
@@ -319,7 +319,7 @@ window.addEventListener('DOMContentLoaded', (event) => {        // Đảm bảo 
                 modal.classList.remove('active'); // Xóa lớp hoạt động để ẩn modal
             }
         }
-        modalTriggers.forEach(trigger => {
+        modalTriggers.forEach(trigger => {      // Thêm sự kiện mở modal cho tất cả trình kích hoạt
             trigger.addEventListener('click', () => {
                 const modalId= trigger.getAttribute('data-modal-target'); // Lấy ID modal từ thuộc tính data
                 openModal(modalId); // Mở modal tương ứng
@@ -381,23 +381,23 @@ window.addEventListener('DOMContentLoaded', (event) => {        // Đảm bảo 
         const historyUserIdSelect = document.getElementById('historyUserIdSelect'); // Phần tử chọn userID cho lịch sử
         const historyMessageElement = document.getElementById('historyMessage'); // Phần tử hiển thị thông báo lịch sử
         function loadHistoryData() {    // Hàm tải dữ liệu lịch sử
-            const selectedUserID = historyUserIdSelect.value;
-            if (selectedUserID) {
-                if (socket.readyState === WebSocket.OPEN) {
+            const selectedUserID = historyUserIdSelect.value;       // Lấy userID đã chọn
+            if (selectedUserID) {       // Kiểm tra nếu đã chọn userID
+                if (socket.readyState === WebSocket.OPEN) {     // Kiểm tra kết nối WebSocket
                     socket.send(`GET_HISTORY:${selectedUserID}`); // Gửi yêu cầu lấy lịch sử
                     historyMessageElement.textContent = `Đang tải dữ liệu lịch sử cho User ID: ${selectedUserID}...`; // Thông báo đang tải
                     historyMessageElement.style.color = '#3498db'; // Màu xanh dương
-                } else {
+                } else {        // Nếu kết nối không mở
                     historyMessageElement.textContent = 'Không thể kết nối đến máy chủ. Vui lòng thử lại sau.'; // Thông báo lỗi kết nối
                     historyMessageElement.style.color = '#f87171'; // Màu đỏ
                 } 
-            } else {
+            } else {        // Nếu chưa chọn userID
                 historyMessageElement.textContent = 'Vui lòng chọn User ID để xem lịch sử.'; // Thông báo chọn userID
                 historyMessageElement.style.color = '#f39c12'; // Màu đỏ
             }
         }
         const loadHistoryButton = document.getElementById('loadHistoryBtn'); // Nút tải dữ liệu lịch sử
-        if (loadHistoryButton) {
+        if (loadHistoryButton) {        // Kiểm tra nếu nút tồn tại
             loadHistoryButton.addEventListener('click', loadHistoryData); // Xử lý khi nhấn nút tải lịch sử
         }
         socket.onopen = function(event) {               // Khi kết nối mở
@@ -407,7 +407,7 @@ window.addEventListener('DOMContentLoaded', (event) => {        // Đảm bảo 
         };
 
         socket.onmessage = function(event) {        // Khi nhận được tin nhắn
-            console.log('Dữ liệu từ máy chủ:', event.data);
+            console.log('Dữ liệu từ máy chủ:', event.data);     // Ghi log dữ liệu nhận được
             const data = event.data;        // Dữ liệu nhận được
 
             if (data.startsWith('USERS_LIST:')) {         // Kiểm tra nếu tin nhắn bắt đầu bằng 'USERS_LIST:'
@@ -421,21 +421,21 @@ window.addEventListener('DOMContentLoaded', (event) => {        // Đảm bảo 
                     historyUserIdSelect.appendChild(option); // Thêm option vào select
                 }); 
                 return; // Dừng xử lý tiếp theo
-            } else if (data.startsWith('HISTORY_DATA:')) {
+            } else if (data.startsWith('HISTORY_DATA:')) {      // Kiểm tra nếu tin nhắn bắt đầu bằng 'HISTORY_DATA: '
                 // Server may send either 'HISTORY_DATA:JSON' or 'HISTORY_DATA:userID:JSON'
-                const payload = data.substring('HISTORY_DATA:'.length);
-                let userID = null;
+                const payload = data.substring('HISTORY_DATA:'.length);     // Lấy phần sau 'HISTORY_DATA: '
+                let userID = null;      // Biến lưu trữ userID nếu có
                 let historyData = [];
-                try {
+                try {       
                     // Try parsing directly as JSON first
-                    historyData = JSON.parse(payload);
-                } catch (e) {
+                    historyData = JSON.parse(payload);      // Phân tích chuỗi JSON
+                } catch (e) {   
                     // If parsing fails, maybe it's in the format userID:JSON
                     const idx = payload.indexOf(':');
-                    if (idx !== -1) {
-                        userID = payload.substring(0, idx);
+                    if (idx !== -1) {   // Tìm dấu hai chấm để tách userID và JSON
+                        userID = payload.substring(0, idx);     // Lấy userID
                         const jsonPart = payload.substring(idx + 1);
-                        try {
+                        try {       // Phân tích chuỗi JSON
                             historyData = JSON.parse(jsonPart);
                         } catch (err) {
                             console.error('Failed to parse HISTORY_DATA payload JSON:', err, payload);
@@ -443,7 +443,7 @@ window.addEventListener('DOMContentLoaded', (event) => {        // Đảm bảo 
                             historyMessageElement.style.color = '#f87171';
                             return;
                         }
-                    } else {
+                    } else {        // Không nhận dạng được định dạng payload
                         console.error('Unrecognized HISTORY_DATA payload:', payload);
                         historyMessageElement.textContent = 'Dữ liệu lịch sử không hợp lệ.';
                         historyMessageElement.style.color = '#f87171';
@@ -451,7 +451,7 @@ window.addEventListener('DOMContentLoaded', (event) => {        // Đảm bảo 
                     }
                 }
 
-                if (historyData && historyData.length > 0) {
+                if (historyData && historyData.length > 0) {        // Kiểm tra nếu có dữ liệu lịch sử
                     // Normalize fields: accept heart_rate or heartRate, and timestamp or timer
                     const labels = historyData.map(d => {
                         const ts = d.timestamp || d.timer || d.time || d.created_at || d.datetime || d.date;
@@ -460,15 +460,15 @@ window.addEventListener('DOMContentLoaded', (event) => {        // Đảm bảo 
                         return ts; // Return raw timestamp; Chart.js time scale will format it
                     });
 
-                    const heartRates = historyData.map(d => {
+                    const heartRates = historyData.map(d => {   // Lấy nhịp tim
                         return d.heart_rate !== undefined ? d.heart_rate : (d.heartRate !== undefined ? d.heartRate : null);
                     });
 
-                    historyHeartRateChart.data.labels = labels;
-                    historyHeartRateChart.data.datasets[0].data = heartRates;
-                    historyHeartRateChart.update();
+                    historyHeartRateChart.data.labels = labels; // Cập nhật nhãn (timestamps)
+                    historyHeartRateChart.data.datasets[0].data = heartRates;       // Cập nhật dữ liệu nhịp tim
+                    historyHeartRateChart.update();     // Cập nhật biểu đồ
 
-                    const displayedUser = userID || (historyData[0].user_id || historyData[0].userId || 'unknown');
+                    const displayedUser = userID || (historyData[0].user_id || historyData[0].userId || 'unknown');     // Lấy userID để hiển thị
                     historyMessageElement.textContent = `Đã tải dữ liệu lịch sử cho User ID: ${displayedUser}`;
                     historyMessageElement.style.color = '#2ecc71';
                 } else {
@@ -514,14 +514,14 @@ window.addEventListener('DOMContentLoaded', (event) => {        // Đảm bảo 
                 heartRateElement.style.animation = 'liquidPulse 1s ease-in-out';    // Hiệu ứng nhịp tim
                 spo2Element.style.animation = 'liquidPulse 1s ease-in-out';     // Hiệu ứng SpO2
                 objecttempElement.style.animation = 'liquidPulse 1s ease-in-out'; // Hiệu ứng nhiệt độ cơ thể
-                setTimeout(() => {
-                    heartRateElement.style.animation = '';
+                setTimeout(() => {      // Xóa hiệu ứng sau 1 giây
+                    heartRateElement.style.animation = '';      // Xóa hiệu ứng nhịp tim
                     spo2Element.style.animation = '';
                     objecttempElement.style.animation = '';
                 }, 1000);
 
                 // Cập nhật đồ thị
-                if (!isNaN(heartRate)) {
+                if (!isNaN(heartRate)) {        // Cập nhật biểu đồ nhịp tim
                     heartRateChart.data.datasets[0].data.push(heartRate);
                     if (heartRateChart.data.datasets[0].data.length > 20) {
                         heartRateChart.data.datasets[0].data.shift();
@@ -554,20 +554,20 @@ window.addEventListener('DOMContentLoaded', (event) => {        // Đảm bảo 
             
         };
 
-        socket.onclose = function(event) {
+        socket.onclose = function(event) {      // Khi kết nối đóng
             console.log('Mất kết nối với máy chủ WebSocket.');
             statusElement.textContent = 'Mất kết nối';
             statusElement.className = 'status disconnected';
         };
 
-        socket.onerror = function(error) {
+        socket.onerror = function(error) {      // Khi có lỗi xảy ra
             console.error('Lỗi WebSocket:', error);
             statusElement.textContent = 'Lỗi kết nối';
             statusElement.className = 'status error';
         };
     
 
-        modalOverlays.forEach(modal => {
+        modalOverlays.forEach(modal => {        // Thêm sự kiện đóng modal khi nhấp vào lớp phủ
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) { // Chỉ đóng khi nhấn vào lớp phủ, không phải nội dung modal
                     closeModal(modal);

@@ -1,10 +1,10 @@
-const mysql = require('mysql2/promise');
+const mysql = require('mysql2/promise');        
 const WebSocket = require('ws');
 
 const dbConfig = {      // Cấu hình kết nối cơ sở dữ liệu
     host: 'localhost',
     user: 'root',
-    password: 'Binh2004@', // Thay 'your_password' bằng mật khẩu thực tế của bạn
+    password: 'Binh2004@', // Mật khẩu cơ sở dữ liệu
     database: 'cambien' 
 }; 
 
@@ -24,15 +24,15 @@ async function connectToDatabase() {    // Hàm kết nối đến cơ sở dữ
     }
 }
 async function saveDataToDatabase(userID,heartRate, spo2, objecttemp) { // Hàm lưu dữ liệu vào cơ sở dữ liệu
-    if (!connection) {
+    if (!connection) {          // Kiểm tra kết nối cơ sở dữ liệu
         console.error('No database connection available.');
         return;
     }
     try {
-        const query = 'INSERT INTO sensor (user_id, heartRate, spo2, temperature) VALUES (?, ?, ?, ?)';
-        const [results] = await connection.execute(query, [userID, heartRate, spo2, objecttemp]);
-        console.log('Data saved to database:', results);
-    } catch (error) {
+        const query = 'INSERT INTO sensor (user_id, heartRate, spo2, temperature) VALUES (?, ?, ?, ?)';     // Truy vấn SQL để chèn dữ liệu vào bảng sensor
+        const [results] = await connection.execute(query, [userID, heartRate, spo2, objecttemp]);   // Sử dụng connection.execute để tránh SQL injection
+        console.log('Data saved to database:', results);        // Ghi log khi dữ liệu được lưu thành công
+    } catch (error) {       // Bắt lỗi nếu có lỗi xảy ra
         console.error('Error saving data to database:', error); // Ghi lỗi nếu có lỗi xảy ra
     }
 }
@@ -42,7 +42,7 @@ async function createUser(username, fullname, age, gender) {        // Hàm tạ
         return null;
     }
     try {
-        const query = 'INSERT INTO users (username, full_name, age, gender) VALUES (?, ?, ?, ?)';
+        const query = 'INSERT INTO users (username, full_name, age, gender) VALUES (?, ?, ?, ?)';       // Truy vấn SQL để chèn người dùng mới vào bảng users
         const [resolves] = await connection.execute(query, [username, fullname, age , gender]);  // Sử dụng connection.execute để tránh SQL injection
         console.log('User đã được tạo:', resolves);
         return resolves.insertId; // Trả về ID của người dùng mới tạo
@@ -64,14 +64,14 @@ async function getAllUsers() {        // Hàm lấy tất cả người dùng
 
 async function getHistoryData(userID) {     // Hàm lấy dữ liệu lịch sử cho một userID cụ thể
     if (!connection) return [];     // Nếu chưa kết nối DB, trả về mảng rỗng
-    try {
-        const query = `
+    try {       // Truy vấn dữ liệu lịch sử từ bảng sensor
+        const query = `                         
             SELECT heartRate AS heart_rate, spo2, temperature, timer AS timestamp           
             FROM sensor
             WHERE user_id = ?
             ORDER BY timer DESC
             LIMIT 2000
-        `;  // Truy vấn lấy dữ liệu lịch sử trong 24 giờ qua cho userID cụ thể.
+        `;  
         const [rows] = await connection.execute(query, [userID]);   // Thực thi truy vấn với tham số userID và thời gian
         return rows.reverse(); // Trả về dữ liệu lịch sử
 
@@ -81,20 +81,20 @@ async function getHistoryData(userID) {     // Hàm lấy dữ liệu lịch s�
     }
 }
 // Tạo WebSocket server
-const wss = new WebSocket.Server({ port: 3030 });
+const wss = new WebSocket.Server({ port: 3030 });           // Lắng nghe kết nối trên cổng 3030
 connectToDatabase(); // Kết nối đến cơ sở dữ liệu khi khởi động server
 console.log('WebSocket server is running on port 3030');
 
-wss.on('connection', ws => {
+wss.on('connection', ws => {        // Xử lý khi có kết nối WebSocket mới
     console.log('Client connected');
 
     getAllUsers().then(users => {       // Lấy tất cả người dùng khi có kết nối mới
         ws.send(`USERS_LIST:${JSON.stringify(users)}`); // Gửi danh sách người dùng cho client mới kết nối
     });
     // Không cần async nữa vì không có await
-    ws.on('message', async(message) => { 
-        const data = message.toString();
-        console.log(`Received from ESP32: ${data}`);
+    ws.on('message', async(message) => {        // Xử lý khi nhận được tin nhắn từ client
+        const data = message.toString();        // Chuyển tin nhắn thành chuỗi
+        console.log(`Received from ESP32: ${data}`);    // Ghi log tin nhắn nhận được
 
         if (data.startsWith('CREATE_USER:')) { // Kiểm tra nếu tin nhắn bắt đầu bằng '
             const parts = data.substring('CREATE_USER:'.length).split(':');    // Tách phần
@@ -102,14 +102,14 @@ wss.on('connection', ws => {
                 const [username, fullname, ageStr, gender] = parts;
                 const age = parseInt(ageStr); // Chuyển đổi age sang số nguyên
                 const userID = await createUser(username, fullname, age , gender); // Tạo người dùng mới và lấy ID
-                if (userID !== null) {
+                if (userID !== null) {  // Kiểm tra nếu người dùng được tạo thành công
                     ws.send(`USER_CREATED:${userID}:${username}`); // Gửi lại ID người dùng mới tạo cho client
                     console.log(`User created with ID: ${userID}:${username}`);
                 } else {
                     ws.send('ERROR: Could not create user'); // Gửi thông báo lỗi nếu không thể tạo người dùng
                 } 
             } else {
-                    console.error('Invalid CREATE_USER format. Expected 4 parts but got:', data);
+                    console.error('Invalid CREATE_USER format. Expected 4 parts but got:', data);       // Ghi lỗi nếu định dạng không hợp lệ
 
                 }
                 return; // Dừng xử lý tiếp theo
@@ -123,15 +123,15 @@ wss.on('connection', ws => {
             return; // Dừng xử lý tiếp theo    
             } 
 
-        const parts = data.split(':');
+        const parts = data.split(':');  
         // Chấp nhận dữ liệu có 3 hoặc 4 phần tử
-        if (parts.length === 4) {
+        if (parts.length === 4) {           // Nếu đúng định dạng với userID
             // Đúng định dạng: userID:heartRate:spo2:objecttemp
             const userID = parseInt(parts[0]);
             const heartRate = parseFloat(parts[1]);
             const spo2 = parseFloat(parts[2]);
             const objecttemp = parseFloat(parts[3]);
-            if (!isNaN(userID) && userID > 0 && !isNaN(heartRate) && !isNaN(spo2) && !isNaN(objecttemp)) {
+            if (!isNaN(userID) && userID > 0 && !isNaN(heartRate) && !isNaN(spo2) && !isNaN(objecttemp)) {      // Kiểm tra dữ liệu hợp lệ
                 // Kiểm tra userID có tồn tại trong bảng users
                 try {
                     const [rows] = await connection.execute('SELECT id FROM users WHERE id = ?', [userID]);
@@ -145,7 +145,7 @@ wss.on('connection', ws => {
                     console.error('Lỗi kiểm tra userID:', err);
                 }
                 const webClientData = `${heartRate}:${spo2}:${objecttemp}`;
-                wss.clients.forEach(client => {
+                wss.clients.forEach(client => {         // Gửi dữ liệu đến tất cả client web trừ client gửi dữ liệu
                     if (client !== ws && client.readyState === WebSocket.OPEN) {
                         client.send(webClientData);
                     }
@@ -174,11 +174,11 @@ wss.on('connection', ws => {
         }
     });
 
-    ws.on('close', () => {
+    ws.on('close', () => {      // Xử lý khi kết nối bị đóng
         console.log('Client disconnected');
     });
 
-    ws.on('error', error => {
+    ws.on('error', error => {       // Xử lý lỗi kết nối
         console.error('WebSocket error:', error);
     });
 });
